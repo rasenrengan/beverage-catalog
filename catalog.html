@@ -27,7 +27,15 @@
         "@type": "GeoCoordinates",
         "latitude": 31.253467,
         "longitude": 29.974973
-      }
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "12:00",
+          "closes": "04:00"
+        }
+      ]
     }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -45,6 +53,10 @@
             <a href="about.html">About</a>
             <a href="contact.html">Contact</a>
         </nav>
+        <div class="nav-search">
+            <input type="text" id="global-search-input" placeholder="Search products...">
+            <button id="global-search-btn">🔍</button>
+        </div>
     </header>
 
     <main class="catalog-page">

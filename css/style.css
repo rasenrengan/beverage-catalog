@@ -351,7 +351,134 @@ footer {
     margin-top: 80px;
 }
 
+/* Contact Container */
+.contact-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    text-align: left;
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 15px;
+    border: 1px solid var(--border);
+}
+
+/* Nav Search Bar */
+.nav-search {
+    position: absolute;
+    right: 5%;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 15px;
+    transition: all 0.3s ease;
+}
+
+.nav-search:focus-within {
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.nav-search input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.9rem;
+    width: 120px;
+    transition: width 0.3s ease;
+}
+
+.nav-search input:focus {
+    width: 180px;
+}
+
+.nav-search button {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 5px;
+}
+
+/* Floating Call Button */
+.floating-call-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--accent), #f39c12);
+    border-radius: 50%;
+    box-shadow: 0 5px 25px rgba(212, 175, 55, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    z-index: 1000;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.floating-call-btn:hover {
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
+}
+
+.floating-call-btn svg {
+    width: 28px;
+    height: 28px;
+}
+
+/* Pulsing effect */
+.fab-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.4;
+    z-index: -1;
+    animation: fabPulse 2s infinite;
+}
+
+@keyframes fabPulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+}
+
 /* Responsive Design */
+@media (max-width: 900px) {
+    .nav-search {
+        position: relative;
+        right: auto;
+        margin-top: 10px;
+        width: 100%;
+        max-width: 250px;
+        justify-content: space-between;
+    }
+    .nav-search input {
+        width: 100%;
+    }
+    .nav-search input:focus {
+        width: 100%;
+    }
+}
+
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -401,5 +528,22 @@ footer {
     
     .products-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .contact-container {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 20px;
+    }
+    
+    .floating-call-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+    }
+    .floating-call-btn svg {
+        width: 22px;
+        height: 22px;
     }
 }

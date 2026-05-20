@@ -27,7 +27,15 @@
         "@type": "GeoCoordinates",
         "latitude": 31.253467,
         "longitude": 29.974973
-      }
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "12:00",
+          "closes": "04:00"
+        }
+      ]
     }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -45,12 +53,16 @@
             <a href="about.html">About</a>
             <a href="contact.html" class="active">Contact</a>
         </nav>
+        <div class="nav-search">
+            <input type="text" id="global-search-input" placeholder="Search products...">
+            <button id="global-search-btn">🔍</button>
+        </div>
     </header>
 
     <main class="page-content" style="padding: 60px 5%; max-width: 1000px; margin: 0 auto; text-align: center;">
         <h1 style="font-size: 3rem; margin-bottom: 30px; color: var(--accent);">Visit Our Store</h1>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; background: var(--card-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--border);">
+        <div class="contact-container">
             <div>
                 <h2 style="margin-bottom: 20px; color: var(--accent);">Get in Touch</h2>
                 <p style="margin-bottom: 10px; font-size: 1.1rem;"><strong>Address:</strong><br> Alexandria, Egypt</p>
@@ -58,9 +70,7 @@
                 <p style="margin-bottom: 10px; font-size: 1.1rem;"><strong>Email:</strong><br> info@royalbeverages.eg</p>
                 
                 <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--accent);">Opening Hours</h3>
-                <p style="margin-bottom: 5px;">Monday - Thursday: 10:00 AM - 10:00 PM</p>
-                <p style="margin-bottom: 5px;">Friday - Saturday: 10:00 AM - 12:00 AM</p>
-                <p style="margin-bottom: 5px;">Sunday: Closed</p>
+                <p style="margin-bottom: 5px;">Everyday: 12:00 PM - 4:00 AM</p>
             </div>
             
             <div class="map-container" style="border-radius: 10px; overflow: hidden; height: 100%;">
@@ -72,5 +82,7 @@
     <footer>
         <p>&copy; 2026 Royal. All rights reserved. Not for online sale.</p>
     </footer>
+
+    <script src="js/app.js"></script>
 </body>
 </html>
