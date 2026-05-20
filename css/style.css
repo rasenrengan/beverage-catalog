@@ -547,3 +547,120 @@ footer {
         height: 22px;
     }
 }
+
+/* Age Verification Modal */
+.age-gate-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(13, 15, 18, 0.98);
+    backdrop-filter: blur(15px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.age-gate-overlay.show {
+    opacity: 1;
+}
+
+.age-gate-modal {
+    background: rgba(26, 29, 36, 0.95);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 50px 40px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.15);
+    transform: scale(0.9);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.age-gate-overlay.show .age-gate-modal {
+    transform: scale(1);
+}
+
+.age-gate-logo {
+    height: 80px;
+    width: auto;
+    margin-bottom: 30px;
+    filter: drop-shadow(0 4px 10px rgba(212, 175, 55, 0.3));
+}
+
+.age-gate-modal h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    font-weight: 800;
+}
+
+.age-gate-modal h2 span {
+    background: linear-gradient(45deg, var(--accent), #f39c12);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.age-gate-modal p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.age-gate-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-age-confirm {
+    background: linear-gradient(135deg, var(--accent), #f39c12);
+    color: #000;
+    border: none;
+    padding: 15px 35px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex: 1;
+}
+
+.btn-age-confirm:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+}
+
+.btn-age-reject {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 15px 35px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex: 1;
+}
+
+.btn-age-reject:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+@media (max-width: 480px) {
+    .age-gate-buttons {
+        flex-direction: column;
+    }
+    .age-gate-modal {
+        padding: 40px 20px;
+    }
+}

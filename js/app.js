@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 allProducts = data;
-                renderProducts(allProducts);
+                renderProducts(allProducts, true);
             })
             .catch(error => console.error('Error loading products:', error));
 
@@ -73,10 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const category = e.target.getAttribute('data-category');
                 
                 if (category === 'All') {
-                    renderProducts(allProducts);
+                    renderProducts(allProducts, true);
                 } else {
                     const filtered = allProducts.filter(p => p.category === category);
-                    renderProducts(filtered);
+                    renderProducts(filtered, false);
                 }
             }
         });
@@ -95,44 +95,117 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Render Function
-        function renderProducts(products) {
+        function renderProducts(products, groupByCategory = false) {
             productsGrid.innerHTML = '';
             
             if (products.length === 0) {
-                productsGrid.innerHTML = '<p style="color: #a0aab2; grid-column: 1/-1; text-align: center;">No products found in this category.</p>';
+                productsGrid.innerHTML = '<p style="color: #a0aab2; grid-column: 1/-1; text-align: center;">No products found.</p>';
                 return;
             }
 
-            products.forEach(product => {
-                const card = document.createElement('a');
-                card.href = `product.html?id=${product.id}`;
-                card.className = 'product-card';
+            if (groupByCategory) {
+                // Change grid to block container for sections
+                productsGrid.style.display = 'block';
                 
-                const formattedPrice = new Intl.NumberFormat('en-EG', {
-                    style: 'currency',
-                    currency: 'EGP'
-                }).format(product.price);
+                // Group by category
+                const groups = {};
+                products.forEach(p => {
+                    if (!groups[p.category]) groups[p.category] = [];
+                    groups[p.category].push(p);
+                });
+                
+                // Category display order
+                const categoryOrder = ['Wine', 'Spirits', 'Beer', 'RTDs', 'Accessories', 'Extras'];
+                
+                categoryOrder.forEach(cat => {
+                    const groupProducts = groups[cat];
+                    if (groupProducts && groupProducts.length > 0) {
+                        const section = document.createElement('div');
+                        section.className = 'category-section';
+                        section.style.marginBottom = '60px';
+                        
+                        const title = document.createElement('h2');
+                        title.className = 'category-section-title';
+                        title.innerText = cat === 'Wine' ? 'Premium Wines' : 
+                                          cat === 'Spirits' ? 'Luxury Spirits' : 
+                                          cat === 'Beer' ? 'Craft Beers' : 
+                                          cat === 'RTDs' ? 'RTDs & Premixes' : cat;
+                        title.style.fontSize = '2rem';
+                        title.style.borderBottom = '2px solid var(--accent)';
+                        title.style.paddingBottom = '10px';
+                        title.style.marginBottom = '25px';
+                        title.style.color = 'var(--text-main)';
+                        
+                        const grid = document.createElement('div');
+                        grid.className = 'products-grid';
+                        grid.style.display = 'grid';
+                        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+                        grid.style.gap = '30px';
+                        
+                        groupProducts.forEach(product => {
+                            const card = createProductCard(product);
+                            grid.appendChild(card);
+                        });
+                        
+                        section.appendChild(title);
+                        section.appendChild(grid);
+                        productsGrid.appendChild(section);
+                    }
+                });
+                
+                // Trigger transitions
+                const cards = productsGrid.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.4s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 15);
+                });
+            } else {
+                // Single grid view
+                productsGrid.style.display = 'grid';
+                productsGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+                productsGrid.style.gap = '30px';
+                
+                products.forEach(product => {
+                    const card = createProductCard(product);
+                    productsGrid.appendChild(card);
+                });
+                
+                // Trigger transitions
+                const cards = productsGrid.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.4s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 30);
+                });
+            }
+        }
 
-                card.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" class="product-img">
-                    <div class="product-category">${product.category}</div>
-                    <h3 class="product-name">${product.name}</h3>
-                    <div class="product-price">${formattedPrice}</div>
-                `;
-                
-                productsGrid.appendChild(card);
-            });
+        function createProductCard(product) {
+            const card = document.createElement('a');
+            card.href = `product.html?id=${product.id}`;
+            card.className = 'product-card';
             
-            const cards = productsGrid.querySelectorAll('.product-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    card.style.transition = 'all 0.4s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 50);
-            });
+            const formattedPrice = new Intl.NumberFormat('en-EG', {
+                style: 'currency',
+                currency: 'EGP'
+            }).format(product.price);
+
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="product-img">
+                <div class="product-category">${product.category}</div>
+                <h3 class="product-name">${product.name}</h3>
+                <div class="product-price">${formattedPrice}</div>
+            `;
+            return card;
         }
     }
 
@@ -155,65 +228,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function performSearch(query) {
         if (!query.trim()) {
-            // If query is empty and we are on catalog, reset to all products
             if (productsGrid && typeof allProducts !== 'undefined') {
                 if (categoryFilters) {
                     categoryFilters.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                     const allLi = categoryFilters.querySelector('li[data-category="All"]');
                     if (allLi) allLi.classList.add('active');
                 }
-                renderProducts(allProducts);
+                renderProducts(allProducts, true);
                 const newUrl = `${window.location.pathname}`;
                 window.history.replaceState({ path: newUrl }, '', newUrl);
             }
             return;
         }
         
-        // If we are already on catalog.html, filter products dynamically
         if (productsGrid && typeof allProducts !== 'undefined') {
             const filtered = allProducts.filter(product => 
                 product.name.toLowerCase().includes(query.toLowerCase()) || 
                 product.category.toLowerCase().includes(query.toLowerCase())
             );
             
-            // Remove active class from categories list since we are custom searching
             if (categoryFilters) {
                 categoryFilters.querySelectorAll('li').forEach(li => li.classList.remove('active'));
             }
             
-            renderProducts(filtered);
+            renderProducts(filtered, false);
             
-            // Update URL without reloading
             const newUrl = `${window.location.pathname}?search=${encodeURIComponent(query)}`;
             window.history.replaceState({ path: newUrl }, '', newUrl);
         } else {
-            // Redirect to catalog page with search query
             window.location.href = `catalog.html?search=${encodeURIComponent(query)}`;
         }
     }
 
     if (searchInput) {
-        // Listen to Enter key
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 performSearch(searchInput.value);
             }
         });
 
-        // Listen to button click
         if (searchBtn) {
             searchBtn.addEventListener('click', () => {
                 performSearch(searchInput.value);
             });
         }
         
-        // If already on catalog page and there is a search param, pre-fill and perform filter
         if (productsGrid) {
             const urlParams = new URLSearchParams(window.location.search);
             const searchParam = urlParams.get('search');
             if (searchParam) {
                 searchInput.value = searchParam;
-                // Wait for allProducts to be fetched and populated in catalog page logic
                 const checkProductsLoaded = setInterval(() => {
                     if (typeof allProducts !== 'undefined' && allProducts.length > 0) {
                         clearInterval(checkProductsLoaded);
@@ -222,5 +286,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 50);
             }
         }
+    }
+
+    // 5. Global Age Verification Gate (Age Verification Wall)
+    if (localStorage.getItem('age_verified') !== 'true') {
+        // Prevent background page scroll while active
+        document.body.style.overflow = 'hidden';
+
+        const overlay = document.createElement('div');
+        overlay.className = 'age-gate-overlay';
+        overlay.innerHTML = `
+            <div class="age-gate-modal">
+                <img src="images/logo.png" alt="Royal Logo" class="age-gate-logo">
+                <h2>Welcome to <span>Royal</span></h2>
+                <p>You must be 21 years of age or older to view our premium beverage selection. Please verify your age to continue.</p>
+                <div class="age-gate-buttons">
+                    <button class="btn-age-confirm" id="age-confirm-btn">Yes, I am 21+</button>
+                    <button class="btn-age-reject" id="age-reject-btn">Under 21</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+        
+        // Trigger show class for transition effect
+        setTimeout(() => {
+            overlay.classList.add('show');
+        }, 10);
+
+        // Yes button click
+        document.getElementById('age-confirm-btn').addEventListener('click', () => {
+            localStorage.setItem('age_verified', 'true');
+            overlay.style.opacity = '0';
+            document.body.style.overflow = 'auto';
+            setTimeout(() => {
+                overlay.remove();
+            }, 500);
+        });
+
+        // Under 21 button click
+        document.getElementById('age-reject-btn').addEventListener('click', () => {
+            window.location.href = 'https://www.responsibility.org/';
+        });
     }
 });
