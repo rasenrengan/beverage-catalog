@@ -1,5 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     let allProducts = [];
+
+    // Global fetch of products (available on every page for search/autocomplete)
+    const productsLoadedPromise = fetch(`data/products.json?_=${Date.now()}`)
+        .then(response => response.json())
+        .then(data => {
+            allProducts = data;
+            return allProducts;
+        })
+        .catch(error => {
+            console.error('Error loading products globally:', error);
+            return [];
+        });
+
     // 1. Product Detail Page Logic
     const productDetailContainer = document.getElementById('product-detail-container');
     if (productDetailContainer) {
@@ -57,14 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryFilters = document.getElementById('category-filters');
     
     if (productsGrid && categoryFilters) {
-        // Fetch products
-        fetch(`data/products.json?_=${Date.now()}`)
-            .then(response => response.json())
-            .then(data => {
-                allProducts = data;
-                renderProducts(allProducts, true);
-            })
-            .catch(error => console.error('Error loading products:', error));
+        // Use globally fetched products
+        productsLoadedPromise.then(data => {
+            renderProducts(data, true);
+        });
 
         // Category Filtering
         categoryFilters.addEventListener('click', (e) => {
@@ -232,6 +241,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Global Navbar Search Logic
     const searchInput = document.getElementById('global-search-input');
     const searchBtn = document.getElementById('global-search-btn');
+    const searchWrapper = document.querySelector('.nav-search');
+    let autocompleteDropdown = null;
+
+    if (searchWrapper && searchInput) {
+        autocompleteDropdown = document.createElement('div');
+        autocompleteDropdown.className = 'nav-search-results';
+        searchWrapper.appendChild(autocompleteDropdown);
+    }
 
     function performSearch(query) {
         if (!query.trim()) {
@@ -268,15 +285,149 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (searchInput) {
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                performSearch(searchInput.value);
+        let activeSuggestionIndex = -1;
+
+        function updateActiveSuggestion(suggestions) {
+            suggestions.forEach((el, idx) => {
+                if (idx === activeSuggestionIndex) {
+                    el.classList.add('active');
+                    el.scrollIntoView({ block: 'nearest' });
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            if (!query || !autocompleteDropdown) {
+                if (autocompleteDropdown) autocompleteDropdown.style.display = 'none';
+                return;
             }
+
+            // Filter products that start with or contain the query
+            const matches = allProducts.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                (p.category && p.category.toLowerCase().includes(query))
+            );
+
+            // Sort to prioritize names that start with the query
+            matches.sort((a, b) => {
+                const aStarts = a.name.toLowerCase().startsWith(query);
+                const bStarts = b.name.toLowerCase().startsWith(query);
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+                return 0;
+            });
+
+            const topMatches = matches.slice(0, 5);
+            autocompleteDropdown.innerHTML = '';
+            activeSuggestionIndex = -1;
+
+            if (topMatches.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'suggestion-no-results';
+                noResults.innerText = 'No products found';
+                autocompleteDropdown.appendChild(noResults);
+            } else {
+                topMatches.forEach(product => {
+                    const item = document.createElement('a');
+                    item.href = `product.html?id=${product.id}`;
+                    item.className = 'autocomplete-suggestion';
+
+                    const formattedPrice = new Intl.NumberFormat('en-EG', {
+                        style: 'currency',
+                        currency: 'EGP'
+                    }).format(product.price);
+
+                    const alcoholMeta = product.alcohol && product.alcohol !== '0%' ? ` • ${product.alcohol} ABV` : '';
+
+                    item.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}">
+                        <div class="suggestion-info">
+                            <span class="suggestion-name">${product.name}</span>
+                            <span class="suggestion-meta">${product.category}${alcoholMeta}</span>
+                        </div>
+                        <span class="suggestion-price">${formattedPrice}</span>
+                    `;
+
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.location.href = `product.html?id=${product.id}`;
+                    });
+
+                    autocompleteDropdown.appendChild(item);
+                });
+
+                if (matches.length > 5) {
+                    const viewAll = document.createElement('a');
+                    viewAll.href = `catalog.html?search=${encodeURIComponent(query)}`;
+                    viewAll.className = 'suggestion-view-all';
+                    viewAll.innerText = `View all ${matches.length} results`;
+
+                    viewAll.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        performSearch(query);
+                        autocompleteDropdown.style.display = 'none';
+                    });
+
+                    autocompleteDropdown.appendChild(viewAll);
+                }
+            }
+
+            autocompleteDropdown.style.display = 'flex';
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (!autocompleteDropdown || autocompleteDropdown.style.display !== 'flex') {
+                if (e.key === 'Enter') {
+                    performSearch(searchInput.value);
+                }
+                return;
+            }
+
+            const suggestions = autocompleteDropdown.querySelectorAll('.autocomplete-suggestion, .suggestion-view-all');
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeSuggestionIndex = (activeSuggestionIndex + 1) % suggestions.length;
+                updateActiveSuggestion(suggestions);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeSuggestionIndex = (activeSuggestionIndex - 1 + suggestions.length) % suggestions.length;
+                updateActiveSuggestion(suggestions);
+            } else if (e.key === 'Escape') {
+                autocompleteDropdown.style.display = 'none';
+                searchInput.blur();
+            } else if (e.key === 'Enter') {
+                if (activeSuggestionIndex >= 0 && activeSuggestionIndex < suggestions.length) {
+                    e.preventDefault();
+                    suggestions[activeSuggestionIndex].click();
+                } else {
+                    performSearch(searchInput.value);
+                    autocompleteDropdown.style.display = 'none';
+                }
+            }
+        });
+
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value.trim()) {
+                searchInput.dispatchEvent(new Event('input'));
+            }
+        });
+
+        searchInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                if (autocompleteDropdown) {
+                    autocompleteDropdown.style.display = 'none';
+                }
+            }, 250);
         });
 
         if (searchBtn) {
             searchBtn.addEventListener('click', () => {
                 performSearch(searchInput.value);
+                if (autocompleteDropdown) autocompleteDropdown.style.display = 'none';
             });
         }
         
@@ -285,12 +436,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const searchParam = urlParams.get('search');
             if (searchParam) {
                 searchInput.value = searchParam;
-                const checkProductsLoaded = setInterval(() => {
-                    if (typeof allProducts !== 'undefined' && allProducts.length > 0) {
-                        clearInterval(checkProductsLoaded);
-                        performSearch(searchParam);
-                    }
-                }, 50);
+                productsLoadedPromise.then(() => {
+                    performSearch(searchParam);
+                });
             }
         }
     }
