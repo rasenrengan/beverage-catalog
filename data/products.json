@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "name": "Skinos Mastiha Spirit 700ml",
+    "category": "Spirits",
+    "price": 1750.00,
+    "image": "images/premium_spirit_bottle.png"
+  },
+  {
+    "id": "2",
+    "name": "Skinos Mastiha Spirit 350ml",
+    "category": "Spirits",
+    "price": 950.00,
+    "image": "images/premium_spirit_bottle.png"
+  },
+  {
+    "id": "3",
+    "name": "Shahrazade Rose Wine BIB 3L",
+    "category": "Wine",
+    "price": 835.00,
+    "image": "images/premium_wine_bottle.png"
+  },
+  {
+    "id": "4",
+    "name": "Devlin Blended Whiskey 750ml",
+    "category": "Spirits",
+    "price": 550.00,
+    "image": "images/premium_spirit_bottle.png"
+  },
+  {
+    "id": "5",
+    "name": "Aria White Sparkling Wine 750ml",
+    "category": "Wine",
+    "price": 450.00,
+    "image": "images/premium_wine_bottle.png"
+  },
+  {
+    "id": "6",
+    "name": "Le Baron White Signature Sparkling Wine 750ml",
+    "category": "Wine",
+    "price": 850.00,
+    "image": "images/premium_wine_bottle.png"
+  },
+  {
+    "id": "7",
+    "name": "Heineken Can 500ml",
+    "category": "Beer",
+    "price": 70.00,
+    "image": "images/premium_beer_bottle.png"
+  },
+  {
+    "id": "8",
+    "name": "Swan Premium Vodka 750ml",
+    "category": "Spirits",
+    "price": 400.00,
+    "image": "images/premium_spirit_bottle.png"
+  },
+  {
+    "id": "9",
+    "name": "Black Rhino Whisky 750ml",
+    "category": "Spirits",
+    "price": 495.00,
+    "image": "images/premium_spirit_bottle.png"
+  },
+  {
+    "id": "10",
+    "name": "Harry’s Premium Gin 750ml",
+    "category": "Spirits",
+    "price": 500.00,
+    "image": "images/premium_spirit_bottle.png"
+  }
+]

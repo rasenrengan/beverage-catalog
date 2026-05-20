@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog | Premium Beverages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">BEVERAGE<span>CO</span></div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="catalog.html" class="active">Catalog</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <main class="catalog-page">
+        <div class="catalog-header">
+            <h1>Our Catalog</h1>
+            <p>Browse our selection and prices. *For preview only, no online sales.*</p>
+        </div>
+
+        <div class="catalog-container">
+            <aside class="sidebar">
+                <h3>Categories</h3>
+                <ul id="category-filters">
+                    <li class="active" data-category="All">All Products</li>
+                    <li data-category="Wine">Wine</li>
+                    <li data-category="Spirits">Spirits</li>
+                    <li data-category="Beer">Beer</li>
+                    <li data-category="RTDs">RTDs</li>
+                    <li data-category="Accessories">Accessories</li>
+                    <li data-category="Extras">Extras</li>
+                </ul>
+            </aside>
+
+            <section class="products">
+                <div class="products-grid" id="products-grid">
+                    <!-- Products will be injected here by JS -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Beverage Co. All rights reserved. Not for online sale.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
