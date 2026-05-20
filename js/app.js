@@ -24,7 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="product-info-wrap" style="flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 300px;">
                                 <div style="color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;">${product.category}</div>
                                 <h1 style="font-size: 2.5rem; margin-bottom: 20px;">${product.name}</h1>
-                                <div style="font-size: 2rem; font-weight: 800; margin-bottom: 30px;">${formattedPrice}</div>
+                                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 30px; flex-wrap: wrap;">
+                                    <div style="font-size: 2rem; font-weight: 800;">${formattedPrice}</div>
+                                    ${product.alcohol && product.alcohol !== '0%' ? `<div style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--accent); color: var(--accent); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">${product.alcohol} ABV</div>` : ''}
+                                </div>
                                 <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 40px;">
                                     ${product.description || 'A premium beverage crafted for the discerning palate.'}
                                 </p>
@@ -198,9 +201,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 currency: 'EGP'
             }).format(product.price);
 
+            const alcoholBadge = product.alcohol && product.alcohol !== '0%' ? `<span style="background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase;">${product.alcohol} ABV</span>` : '';
+
             card.innerHTML = `
                 <img src="${product.image}" alt="${product.name}" class="product-img">
-                <div class="product-category">${product.category}</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+                    <div class="product-category" style="margin-bottom: 0;">${product.category}</div>
+                    ${alcoholBadge}
+                </div>
                 <h3 class="product-name">${product.name}</h3>
                 <div class="product-price">${formattedPrice}</div>
             `;
