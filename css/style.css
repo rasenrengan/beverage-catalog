@@ -71,8 +71,11 @@ a {
 }
 
 .navbar nav a {
-    margin: 0 15px;
-    font-weight: 300;
+    margin: 0 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
     transition: color 0.3s ease;
 }
 
@@ -906,4 +909,38 @@ footer {
     box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
 }
 
+/* Footer Navigation Links */
+.footer-links {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
 
+.footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--accent);
+    transform: translateY(-1px);
+}
+
+/* Category Section Scroll Margin Offset for Sticky Navbar */
+.category-section {
+    scroll-margin-top: 100px;
+}
+
+/* Mobile responsive navbar spacing update */
+@media (max-width: 768px) {
+    .navbar nav a {
+        margin: 0 12px;
+        font-size: 0.95rem;
+    }
+}

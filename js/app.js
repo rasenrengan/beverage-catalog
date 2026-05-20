@@ -75,19 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
             renderProducts(data, true);
         });
 
-        // Category Filtering
+        // Category Scroll-To Navigation
         categoryFilters.addEventListener('click', (e) => {
             if (e.target.tagName === 'LI') {
-                categoryFilters.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-                e.target.classList.add('active');
-
                 const category = e.target.getAttribute('data-category');
                 
                 if (category === 'All') {
-                    renderProducts(allProducts, true);
+                    categoryFilters.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                    e.target.classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    const filtered = allProducts.filter(p => p.category === category);
-                    renderProducts(filtered, false);
+                    const targetSection = document.getElementById(`category-section-${category.toLowerCase()}`);
+                    if (targetSection) {
+                        categoryFilters.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                        e.target.classList.add('active');
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }
             }
         });
@@ -121,8 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Group by category
                 const groups = {};
                 products.forEach(p => {
-                    if (!groups[p.category]) groups[p.category] = [];
-                    groups[p.category].push(p);
+                    const catName = p.category || 'Extras';
+                    if (!groups[catName]) groups[catName] = [];
+                    groups[catName].push(p);
                 });
                 
                 // Category display order
@@ -133,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (groupProducts && groupProducts.length > 0) {
                         const section = document.createElement('div');
                         section.className = 'category-section';
+                        section.id = `category-section-${cat.toLowerCase()}`;
                         section.style.marginBottom = '60px';
                         
                         const title = document.createElement('h2');
@@ -161,6 +166,42 @@ document.addEventListener('DOMContentLoaded', () => {
                         section.appendChild(title);
                         section.appendChild(grid);
                         productsGrid.appendChild(section);
+                    }
+                });
+
+                // Scrollspy setup to highlight active category in sidebar as user scrolls
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '-100px 0px -70% 0px',
+                    threshold: 0
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const sectionId = entry.target.id;
+                            const catName = sectionId.replace('category-section-', '');
+                            
+                            categoryFilters.querySelectorAll('li').forEach(li => {
+                                const liCat = li.getAttribute('data-category').toLowerCase();
+                                if (liCat === catName) {
+                                    categoryFilters.querySelectorAll('li').forEach(l => l.classList.remove('active'));
+                                    li.classList.add('active');
+                                }
+                            });
+                        }
+                    });
+                }, observerOptions);
+
+                const sections = productsGrid.querySelectorAll('.category-section');
+                sections.forEach(sec => observer.observe(sec));
+
+                // Scroll to top listener to reset to "All"
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY < 150) {
+                        categoryFilters.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                        const allLi = categoryFilters.querySelector('li[data-category="All"]');
+                        if (allLi) allLi.classList.add('active');
                     }
                 });
                 
@@ -275,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 categoryFilters.querySelectorAll('li').forEach(li => li.classList.remove('active'));
             }
             
-            renderProducts(filtered, false);
+            renderProducts(filtered, true); // Grouped matches
             
             const newUrl = `${window.location.pathname}?search=${encodeURIComponent(query)}`;
             window.history.replaceState({ path: newUrl }, '', newUrl);
