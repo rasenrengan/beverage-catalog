@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const productId = urlParams.get('id');
 
         if (productId) {
-            fetch('data/products.json')
+            fetch(`data/products.json?_=${Date.now()}`)
                 .then(response => response.json())
                 .then(data => {
                     // Fix: Compare string to string since JSON ids are numbers
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (productsGrid && categoryFilters) {
         // Fetch products
-        fetch('data/products.json')
+        fetch(`data/products.json?_=${Date.now()}`)
             .then(response => response.json())
             .then(data => {
                 allProducts = data;
