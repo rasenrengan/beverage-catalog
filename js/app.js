@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 // Category display order
-                const categoryOrder = ['Wine', 'Spirits', 'Beer', 'RTDs', 'Accessories', 'Extras'];
+                const categoryOrder = ['Wine', 'Spirits', 'Beer', 'RTDs', 'Snacks', 'Soft Drinks', 'Tobacco', 'Accessories', 'Extras'];
                 
                 categoryOrder.forEach(cat => {
                     const groupProducts = groups[cat];
@@ -145,7 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         title.innerText = cat === 'Wine' ? 'Premium Wines' : 
                                           cat === 'Spirits' ? 'Luxury Spirits' : 
                                           cat === 'Beer' ? 'Craft Beers' : 
-                                          cat === 'RTDs' ? 'RTDs & Premixes' : cat;
+                                          cat === 'RTDs' ? 'RTDs & Premixes' : 
+                                          cat === 'Snacks' ? 'Gourmet Snacks' : 
+                                          cat === 'Soft Drinks' ? 'Premium Soft Drinks' : 
+                                          cat === 'Tobacco' ? 'Select Tobacco' : cat;
                         title.style.fontSize = '2rem';
                         title.style.borderBottom = '2px solid var(--accent)';
                         title.style.paddingBottom = '10px';
@@ -241,29 +244,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        function createProductCard(product) {
-            const card = document.createElement('a');
-            card.href = `product.html?id=${product.id}`;
-            card.className = 'product-card';
-            
-            const formattedPrice = new Intl.NumberFormat('en-EG', {
-                style: 'currency',
-                currency: 'EGP'
-            }).format(product.price);
+    }
 
-            const alcoholBadge = product.alcohol && product.alcohol !== '0%' ? `<span style="background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase;">${product.alcohol} ABV</span>` : '';
+    // Shared product card creator (used by catalog, search, and category pages)
+    function createProductCard(product) {
+        const card = document.createElement('a');
+        card.href = `product.html?id=${product.id}`;
+        card.className = 'product-card';
+        
+        const formattedPrice = new Intl.NumberFormat('en-EG', {
+            style: 'currency',
+            currency: 'EGP'
+        }).format(product.price);
 
-            card.innerHTML = `
-                <img src="${product.image}" alt="${product.name}" class="product-img">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
-                    <div class="product-category" style="margin-bottom: 0;">${product.category}</div>
-                    ${alcoholBadge}
-                </div>
-                <h3 class="product-name">${product.name}</h3>
-                <div class="product-price">${formattedPrice}</div>
-            `;
-            return card;
-        }
+        const alcoholBadge = product.alcohol && product.alcohol !== '0%' ? `<span style="background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase;">${product.alcohol} ABV</span>` : '';
+
+        card.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" class="product-img">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+                <div class="product-category" style="margin-bottom: 0;">${product.category}</div>
+                ${alcoholBadge}
+            </div>
+            <h3 class="product-name">${product.name}</h3>
+            <div class="product-price">${formattedPrice}</div>
+        `;
+        return card;
     }
 
     // 3. Global Floating Action Button (Call Us)
@@ -292,21 +297,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function performSearch(query) {
+        const portalGrid = document.getElementById('portal-grid');
+        const portalSearchResults = document.getElementById('portal-search-results');
+        const portalTitle = document.getElementById('portal-main-title');
+        const portalSubtitle = document.getElementById('portal-main-subtitle');
+
         if (!query.trim()) {
-            if (productsGrid && typeof allProducts !== 'undefined') {
+            // Restore catalog hub view
+            if (portalGrid && portalSearchResults) {
+                portalGrid.style.display = 'grid';
+                portalSearchResults.style.display = 'none';
+                if (portalTitle) portalTitle.style.display = 'block';
+                if (portalSubtitle) portalSubtitle.style.display = 'block';
+            }
+
+            if (productsGrid && typeof allProducts !== 'undefined' && !portalGrid) {
                 if (categoryFilters) {
                     categoryFilters.querySelectorAll('li').forEach(li => li.classList.remove('active'));
                     const allLi = categoryFilters.querySelector('li[data-category="All"]');
                     if (allLi) allLi.classList.add('active');
                 }
                 renderProducts(allProducts, true);
-                const newUrl = `${window.location.pathname}`;
-                window.history.replaceState({ path: newUrl }, '', newUrl);
             }
+            
+            const newUrl = `${window.location.pathname}`;
+            window.history.replaceState({ path: newUrl }, '', newUrl);
             return;
         }
         
-        if (productsGrid && typeof allProducts !== 'undefined') {
+        // If we are on catalog portal hub
+        if (portalGrid && portalSearchResults && typeof allProducts !== 'undefined') {
+            portalGrid.style.display = 'none';
+            portalSearchResults.style.display = 'block';
+            if (portalTitle) portalTitle.style.display = 'none';
+            if (portalSubtitle) portalSubtitle.style.display = 'none';
+
+            const filtered = allProducts.filter(product => 
+                product.name.toLowerCase().includes(query.toLowerCase()) || 
+                product.category.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            const titleEl = document.getElementById('search-results-title');
+            if (titleEl) {
+                titleEl.innerHTML = `Search Results for "<span>${query}</span>"`;
+            }
+
+            // Render matching products inside productsGrid container
+            const resultsGrid = document.getElementById('products-grid');
+            if (resultsGrid) {
+                resultsGrid.innerHTML = '';
+                if (filtered.length === 0) {
+                    resultsGrid.innerHTML = '<p style="color: #a0aab2; grid-column: 1/-1; text-align: center; padding: 40px 0;">No products found matching your search. Try another query!</p>';
+                    return;
+                }
+                filtered.forEach(product => {
+                    const card = createProductCard(product);
+                    resultsGrid.appendChild(card);
+                });
+                
+                // Animation entrance
+                const cards = resultsGrid.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.4s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 20);
+                });
+            }
+
+            const newUrl = `${window.location.pathname}?search=${encodeURIComponent(query)}`;
+            window.history.replaceState({ path: newUrl }, '', newUrl);
+        } else if (productsGrid && typeof allProducts !== 'undefined') {
+            // Traditional catalog with category grouping
             const filtered = allProducts.filter(product => 
                 product.name.toLowerCase().includes(query.toLowerCase()) || 
                 product.category.toLowerCase().includes(query.toLowerCase())
@@ -524,5 +589,38 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('age-reject-btn').addEventListener('click', () => {
             window.location.href = 'https://www.responsibility.org/';
         });
+    }
+
+    // 6. Standalone Category Page Logic
+    const categoryProductsGrid = document.getElementById('category-products-grid');
+    if (categoryProductsGrid) {
+        const currentCategory = document.body.getAttribute('data-category');
+        if (currentCategory) {
+            productsLoadedPromise.then(data => {
+                const filtered = data.filter(p => p.category && p.category.toLowerCase() === currentCategory.toLowerCase());
+                categoryProductsGrid.innerHTML = '';
+                
+                if (filtered.length === 0) {
+                    categoryProductsGrid.innerHTML = '<p style="color: #a0aab2; grid-column: 1/-1; text-align: center; padding: 40px 0;">No products found in this category yet. Uploading soon!</p>';
+                    return;
+                }
+                
+                filtered.forEach(product => {
+                    const card = createProductCard(product);
+                    categoryProductsGrid.appendChild(card);
+                });
+                
+                const cards = categoryProductsGrid.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.4s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 20);
+                });
+            });
+        }
     }
 });

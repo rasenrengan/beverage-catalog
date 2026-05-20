@@ -1024,5 +1024,50 @@
         "image": "images/wine/white/XO White Wine 750ml.jpg",
         "description": "XO White Wine 750ml is a testament to quality and tradition. Crisp and refreshing with hints of citrus and a floral bouquet. Enjoy responsibly and elevate your next celebration with this exquisite choice.",
         "alcohol": "12.5%"
+    },
+    {
+        "id": "201",
+        "name": "Truffle & Herb Potato Crisps 120g",
+        "category": "Snacks",
+        "price": 95.0,
+        "image": "images/snacks_crisps.png",
+        "description": "Gourmet hand-cooked potato crisps seasoned with exquisite black winter truffle and aromatic wild herbs. The perfect savory companion to your premium beer or champagne.",
+        "alcohol": "0%"
+    },
+    {
+        "id": "202",
+        "name": "Premium Roasted Cashews 150g",
+        "category": "Snacks",
+        "price": 160.0,
+        "image": "images/snacks_cashews.png",
+        "description": "Select whole cashew nuts, slowly dry-roasted to a rich golden perfection and lightly dusted with delicate sea salt flakes. Excellent pairing for fine wines and heavy whiskeys.",
+        "alcohol": "0%"
+    },
+    {
+        "id": "203",
+        "name": "Royal Premium Tonic Water 250ml",
+        "category": "Soft Drinks",
+        "price": 40.0,
+        "image": "images/soft_tonic.png",
+        "description": "A high-end, sparkling tonic water brewed with hand-selected natural quinine and organic botanicals. Crisp, refreshing, and custom-tailored for the ultimate premium cocktail mixer.",
+        "alcohol": "0%"
+    },
+    {
+        "id": "204",
+        "name": "Artisanal Ginger Beer 330ml",
+        "category": "Soft Drinks",
+        "price": 65.0,
+        "image": "images/soft_ginger.png",
+        "description": "Naturally fermented ginger beer made with cold-pressed fresh ginger root and premium cane sugar. Delivers a vibrant, zesty spice kick with a smooth, bubbly finish.",
+        "alcohol": "0%"
+    },
+    {
+        "id": "205",
+        "name": "Premium Royal Gold Cigarettes",
+        "category": "Tobacco",
+        "price": 150.0,
+        "image": "images/tobacco_gold.png",
+        "description": "A select blend of fine, sun-cured Virginia and Turkish tobaccos, crafted under strict master standards for a rich, aromatic, and exceptionally smooth smoking experience.",
+        "alcohol": "0%"
     }
 ]
