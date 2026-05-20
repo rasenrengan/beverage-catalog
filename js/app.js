@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let allProducts = [];
     // 1. Product Detail Page Logic
     const productDetailContainer = document.getElementById('product-detail-container');
     if (productDetailContainer) {
@@ -53,8 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryFilters = document.getElementById('category-filters');
     
     if (productsGrid && categoryFilters) {
-        let allProducts = [];
-
         // Fetch products
         fetch('data/products.json')
             .then(response => response.json())
