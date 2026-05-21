@@ -372,6 +372,81 @@
                 font-size: 2.5rem;
             }
         }
+
+        @media (max-width: 768px) {
+            .filter-nav {
+                justify-content: flex-start;
+                overflow-x: auto;
+                white-space: nowrap;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                padding: 0 15px;
+                gap: 12px;
+                margin: 30px 0 15px 0;
+                width: 100vw;
+                margin-left: -5%;
+            }
+            .filter-nav::-webkit-scrollbar {
+                display: none;
+            }
+            .filter-btn {
+                flex: 0 0 auto;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .spirit-filter-nav {
+                justify-content: flex-start;
+                overflow-x: auto;
+                white-space: nowrap;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                padding: 6px 15px;
+                gap: 8px;
+                margin-bottom: 25px;
+                width: 100vw;
+                margin-left: -5%;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+            .spirit-filter-nav::-webkit-scrollbar {
+                display: none;
+            }
+            .spirit-btn {
+                flex: 0 0 auto;
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+
+            .recipes-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            .recipe-card {
+                border-radius: 12px;
+            }
+            .recipe-img-container {
+                height: 180px;
+            }
+            .recipe-info {
+                padding: 18px;
+            }
+            .recipe-info h3 {
+                font-size: 1.35rem;
+            }
+            
+            .journal-hero {
+                height: 35vh;
+            }
+            .journal-hero-content h1 {
+                font-size: 2.2rem;
+            }
+            .journal-hero-content p {
+                font-size: 1rem;
+                padding: 0 15px;
+            }
+        }
     </style>
 </head>
 <body>

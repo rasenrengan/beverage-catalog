@@ -531,7 +531,26 @@ footer {
     }
     
     .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .products-grid .product-card {
+        padding: 12px;
+        border-radius: 10px;
+    }
+    
+    .products-grid .product-card img {
+        height: 160px;
+    }
+    
+    .products-grid .product-card h3 {
+        font-size: 0.95rem;
+        margin-top: 8px;
+    }
+    
+    .products-grid .product-card .price {
+        font-size: 1.05rem;
     }
     
     .contact-container {
