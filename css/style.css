@@ -19,7 +19,8 @@ body {
     font-family: 'Outfit', sans-serif;
     background-color: var(--bg-main);
     color: var(--text-main);
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 1.05rem;
 }
 
 a {
@@ -503,7 +504,7 @@ footer {
     
     .navbar nav a {
         margin: 0;
-        font-size: 0.95rem;
+        font-size: 1.05rem;
     }
 
     .hero h1 {
