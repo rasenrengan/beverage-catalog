@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connoisseur's Journal | Royal - Premium Beverage Guide & Recipes</title>
+    <meta name="description" content="Explore Royal's curated cocktail recipes and sommelier wine guide. Learn mixology secrets and red, white, and rosé wine food pairings in Alexandria.">
+    <meta property="og:title" content="Connoisseur's Journal | Royal - Premium Beverage Guide & Recipes">
+    <meta property="og:description" content="Explore Royal's curated cocktail recipes and sommelier wine guide. Learn mixology secrets and red, white, and rosé wine food pairings in Alexandria.">
+    <meta property="og:image" content="https://rasenrengan.github.io/beverage-catalog/images/logo.png">
+    <meta property="og:url" content="https://rasenrengan.github.io/beverage-catalog/blog.html">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .journal-hero {
+            position: relative;
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(rgba(13, 15, 18, 0.8), rgba(13, 15, 18, 0.9)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1500&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .journal-hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .journal-hero-content p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .filter-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 50px 0 30px 0;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: var(--text-muted);
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        .journal-section {
+            padding: 40px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .recipe-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 175, 55, 0.05);
+        }
+
+        .recipe-img-container {
+            position: relative;
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .recipe-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .recipe-card:hover .recipe-img-container img {
+            transform: scale(1.08);
+        }
+
+        .recipe-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(13, 15, 18, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .recipe-info {
+            padding: 25px;
+        }
+
+        .recipe-info h3 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 12px;
+        }
+
+        .recipe-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ingredients-list {
+            margin-bottom: 20px;
+        }
+
+        .ingredients-list h4 {
+            color: var(--accent);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ingredients-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .ingredients-list li {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ingredients-list li::before {
+            content: "•";
+            color: var(--accent);
+        }
+
+        .instructions-list h4 {
+            color: var(--accent);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .instructions-list ol {
+            padding-left: 20px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .instructions-list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        /* Wine Guide Styles */
+        .wine-guide-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .wine-type-section {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .wine-type-section:hover {
+            border-color: rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .wine-type-section.reverse {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .wine-type-info h3 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .wine-type-info h3.red-title {
+            background: linear-gradient(135deg, #ff4757, #b33939);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .wine-type-info h3.white-title {
+            background: linear-gradient(135deg, #eccc68, #ffa502);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .wine-type-info h3.rose-title {
+            background: linear-gradient(135deg, #ff7f50, #ff6b81);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .wine-type-info .subtitle {
+            color: var(--accent);
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .wine-type-info p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+        }
+
+        .pairing-box {
+            background: rgba(13, 15, 18, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .pairing-box h4 {
+            color: var(--accent);
+            font-size: 1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pairing-box p {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        .wine-type-visual {
+            position: relative;
+            height: 350px;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .wine-type-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .wine-type-visual-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(13, 15, 18, 0.9), transparent);
+        }
+
+        @media (max-width: 900px) {
+            .wine-type-section, .wine-type-section.reverse {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 25px;
+            }
+            .wine-type-visual {
+                height: 250px;
+                order: -1;
+            }
+            .journal-hero-content h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="global-banner">
+        <img src="images/banner.png" alt="Royal Storefront Banner - premium wine, beers, and spirits guide in Alexandria" title="Royal Premium Wine, Beers, & Spirits Journal banner">
+    </div>
+    <header class="navbar" title="Royal - late night home delivery navbar catalog search">
+        <div class="logo"><a href="index.html"><img src="images/logo.png" alt="Royal Store logo - elite liquor store and alcohol retail monopoly in As Soyouf Bahri, Qesm Al Montazah, Alexandria" title="Royal Brand Logo"></a></div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="catalog.html">Catalog</a>
+            <a href="blog.html" class="active">Journal</a>
+        </nav>
+        <div class="nav-search">
+            <input type="text" id="global-search-input" placeholder="Search products...">
+            <button id="global-search-btn">🔍</button>
+        </div>
+    </header>
+
+    <main title="Royal Connoisseur's Journal - Cocktail Mixology Recipes & Sommelier Wine Pairing Guide">
+        <!-- Parallax Hero -->
+        <section class="journal-hero" title="Royal Connoisseur's Journal Banner overlay">
+            <div class="journal-hero-content">
+                <h1>Connoisseur's Journal</h1>
+                <p>Curated mixology secrets, legendary cocktail recipes, and professional wine pairing guides from the Royal master sommeliers.</p>
+            </div>
+        </section>
+
+        <!-- Toggle Controls -->
+        <div class="filter-nav">
+            <button class="filter-btn active" id="btn-recipes" onclick="switchTab('recipes')">Mixology Recipes</button>
+            <button class="filter-btn" id="btn-wines" onclick="switchTab('wines')">Wine Selection & Pairing</button>
+        </div>
+
+        <!-- 1. Recipes Section -->
+        <section class="journal-section" id="section-recipes" title="Curated Cocktail Mixology Recipes">
+            <div class="recipes-grid">
+                
+                <!-- Recipe 1 -->
+                <article class="recipe-card" title="The Royal Sapphire Spritz recipe card">
+                    <div class="recipe-img-container">
+                        <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=700&q=80" alt="Royal Sapphire Spritz premium blue cocktail recipe">
+                        <span class="recipe-badge">Vibrant & Crisp</span>
+                    </div>
+                    <div class="recipe-info">
+                        <h3>The Royal Sapphire Spritz</h3>
+                        <div class="recipe-meta">
+                            <span>⏱️ 5 Mins</span>
+                            <span>🍹 Easy</span>
+                            <span>🥂 Spritz Glass</span>
+                        </div>
+                        <div class="ingredients-list">
+                            <h4>Ingredients</h4>
+                            <ul>
+                                <li>50ml Premium Gin (e.g. Harry's Premium Gin)</li>
+                                <li>15ml Blue Curaçao liqueur</li>
+                                <li>120ml Premium Tonic Water</li>
+                                <li>Fresh blueberries & lemon peel</li>
+                                <li>Fresh rosemary sprig (garnish)</li>
+                            </ul>
+                        </div>
+                        <div class="instructions-list">
+                            <h4>Preparation</h4>
+                            <ol>
+                                <li>Fill a large balloon or copita glass to the brim with crushed premium ice blocks.</li>
+                                <li>Pour the dry gin and blue curaçao over the ice, stirring gently.</li>
+                                <li>Top slowly with chilled tonic water to preserve carbonation.</li>
+                                <li>Express the lemon peel over the glass, drop in a few fresh blueberries.</li>
+                                <li>Slap the rosemary sprig to activate the oils, light the tip briefly for a smoky aroma, and garnish.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Recipe 2 -->
+                <article class="recipe-card" title="The Smoked Rosemary Old Fashioned recipe card">
+                    <div class="recipe-img-container">
+                        <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=700&q=80" alt="Smoked Rosemary Old Fashioned premium cocktail recipe">
+                        <span class="recipe-badge">Bold & Smoky</span>
+                    </div>
+                    <div class="recipe-info">
+                        <h3>Smoked Rosemary Old Fashioned</h3>
+                        <div class="recipe-meta">
+                            <span>⏱️ 7 Mins</span>
+                            <span>🥃 Medium</span>
+                            <span>🥃 Rocks Glass</span>
+                        </div>
+                        <div class="ingredients-list">
+                            <h4>Ingredients</h4>
+                            <ul>
+                                <li>60ml Blended Scotch or Bourbon (e.g. Devlin Blended Whiskey)</li>
+                                <li>2 dashes Aromatic Angostura Bitters</li>
+                                <li>1 Premium brown sugar cube</li>
+                                <li>Fresh rosemary sprig & orange peel</li>
+                                <li>1 Large clear ice block</li>
+                            </ul>
+                        </div>
+                        <div class="instructions-list">
+                            <h4>Preparation</h4>
+                            <ol>
+                                <li>Place a single brown sugar cube in your rocks glass. Add aromatic bitters and muddle until fully dissolved.</li>
+                                <li>Place a fresh rosemary sprig in the glass and use a kitchen torch to lightly char the leaves until aromatic smoke is released.</li>
+                                <li>Add a single large, clear ice block on top of the smoking rosemary.</li>
+                                <li>Pour the blended whiskey slowly over the ice, stirring continuously for 20 seconds.</li>
+                                <li>Express the oils of a fresh orange peel across the rim, twist, and place as a garnish.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Recipe 3 -->
+                <article class="recipe-card" title="Alexandria Sunset Hibiscus Spritz recipe card">
+                    <div class="recipe-img-container">
+                        <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=700&q=80" alt="Alexandria Sunset Hibiscus Spritz premium cocktail recipe">
+                        <span class="recipe-badge">Exotic & Fruity</span>
+                    </div>
+                    <div class="recipe-info">
+                        <h3>Alexandria Sunset Hibiscus Spritz</h3>
+                        <div class="recipe-meta">
+                            <span>⏱️ 6 Mins</span>
+                            <span>🍸 Easy</span>
+                            <span>🍷 Wine Glass</span>
+                        </div>
+                        <div class="ingredients-list">
+                            <h4>Ingredients</h4>
+                            <ul>
+                                <li>45ml Botanical Dry Gin (or Swan Premium Vodka)</li>
+                                <li>30ml Freshly brewed organic hibiscus tea (cooled)</li>
+                                <li>15ml Freshly squeezed lime juice</li>
+                                <li>60ml Sparkling Champagne or wine (e.g. Aida Valmont)</li>
+                                <li>Fresh mint leaves & lime wheel</li>
+                            </ul>
+                        </div>
+                        <div class="instructions-list">
+                            <h4>Preparation</h4>
+                            <ol>
+                                <li>In a cocktail shaker filled with ice blocks, combine the gin, cooled hibiscus tea, and fresh lime juice.</li>
+                                <li>Shake vigorously for 10-12 seconds until condensation forms on the shaker shell.</li>
+                                <li>Double strain into a premium wine glass filled with fresh ice.</li>
+                                <li>Top with sparkling wine or champagne to create a beautiful, layered sunset gradient.</li>
+                                <li>Garnish with a fresh lime wheel and slapped mint leaves for maximum sensory freshness.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- 2. Wines Section -->
+        <section class="journal-section" id="section-wines" style="display: none;" title="Sommelier Wine Selection & Food Pairing Guide">
+            <div class="wine-guide-container">
+                
+                <!-- Red Wine -->
+                <article class="wine-type-section" title="Sommelier Red Wine Selection Guide">
+                    <div class="wine-type-info">
+                        <div class="subtitle">Rich & Full-Bodied</div>
+                        <h3 class="red-title">Vintage Red Wines</h3>
+                        <p>Red wines derive their robust structure, deep ruby colors, and complex tannins from fermenting together with the dark grape skins. Standard varieties like Cabernet Sauvignon, Merlot, and Syrah (e.g., our esteemed Chateau de Grandville, Grand Marquis, and Beausoleil Merlot) exhibit rich flavors of dark cherries, oak, and spices. Select a fine red wine for premium, intimate dinners, celebration events, and cooler evenings.</p>
+                        <div class="pairing-box">
+                            <h4>Sommelier Recommended Pairings</h4>
+                            <p>Pairs outstandingly with char-grilled ribeye steak, roasted lamb chops with fresh herbs, smoked beef sliders, rich tomato pasta, gourmet dark chocolates, and roasted salted cashews or smoked almonds from the Royal Roastery.</p>
+                        </div>
+                    </div>
+                    <div class="wine-type-visual">
+                        <img src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=700&q=80" alt="Vintage Red Wine cellared bottle and filled glass">
+                        <div class="wine-type-visual-overlay"></div>
+                    </div>
+                </article>
+
+                <!-- White Wine -->
+                <article class="wine-type-section reverse" title="Sommelier White Wine Selection Guide">
+                    <div class="wine-type-visual">
+                        <img src="https://images.unsplash.com/photo-1569919650476-f543ad20653b?auto=format&fit=crop&w=700&q=80" alt="Crisp White Wine bottle and glass chilled on coast">
+                        <div class="wine-type-visual-overlay"></div>
+                    </div>
+                    <div class="wine-type-info">
+                        <div class="subtitle">Crisp & Refreshing</div>
+                        <h3 class="white-title">Crisp White Wines</h3>
+                        <p>White wines are fermented solely with pressed juice, bypassing skin contact to preserve a vibrant, bright yellow hues, crisp acidity, and refreshing floral or citrus notes. Selections like Chardonnay and Pinot Blanc (e.g. Cape Bay Chardonnay or Grand Marquis Pinot Blanc) bring alive hints of apples, lemons, and minerals. Perfect for hot beach days, sun-drenched lunches, or a crisp evening wind on the Alexandria coast.</p>
+                        <div class="pairing-box">
+                            <h4>Sommelier Recommended Pairings</h4>
+                            <p>Best enjoyed alongside freshly caught Mediterranean grilled sea bass, garlic lemon butter prawns, baked salmon, fresh green salads, goat cheese platters, salted almonds, and lightly toasted pita crackers.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Rosé Wine -->
+                <article class="wine-type-section" title="Sommelier Rosé Wine Selection Guide">
+                    <div class="wine-type-info">
+                        <div class="subtitle">Vibrant & Playful</div>
+                        <h3 class="rose-title">Vibrant Rosé Wines</h3>
+                        <p>Rosé wines capture the best of both worlds through a brief, controlled maceration with grape skins (usually only a few hours) to achieve a beautiful pink gradient. Offering a playful balance of red berry fruitiness and clean, refreshing acidity, bottles like Obelisk Rosetta Rose and Omar Khayyam Rose are exceptionally versatile, easy-drinking, and elegant. Select a rosé wine to add a vibrant spark to social gatherings and sunsets.</p>
+                        <div class="pairing-box">
+                            <h4>Sommelier Recommended Pairings</h4>
+                            <p>Complements light Mediterranean tapas, prosciutto, smoked salmon rolls, grilled chicken skewers, fresh strawberries, feta and watermelon salads, salted roasted pistachios, and gourmet white chocolate truffles.</p>
+                        </div>
+                    </div>
+                    <div class="wine-type-visual">
+                        <img src="https://images.unsplash.com/photo-1553184920-f9e47c7ae741?auto=format&fit=crop&w=700&q=80" alt="Vibrant Rose Wine bottle and glass at sunset">
+                        <div class="wine-type-visual-overlay"></div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+    </main>
+
+    <footer title="Royal Storefront footer copyright notice and terms">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact Us</a>
+        </div>
+        <p>&copy; 2026 Royal. All rights reserved. Not for online sale.</p>
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            const recipesSection = document.getElementById('section-recipes');
+            const winesSection = document.getElementById('section-wines');
+            const btnRecipes = document.getElementById('btn-recipes');
+            const btnWines = document.getElementById('btn-wines');
+
+            if (tab === 'recipes') {
+                recipesSection.style.display = 'block';
+                winesSection.style.display = 'none';
+                btnRecipes.classList.add('active');
+                btnWines.classList.remove('active');
+            } else {
+                recipesSection.style.display = 'none';
+                winesSection.style.display = 'block';
+                btnRecipes.classList.remove('active');
+                btnWines.classList.add('active');
+            }
+        }
+    </script>
+    <script src="js/app.js"></script>
+</body>
+</html>
