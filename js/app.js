@@ -563,7 +563,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 5. Global Age Verification Gate (Age Verification Wall with ARIA & Focus Trap)
-    const isLighthouse = navigator.userAgent.includes('Chrome-Lighthouse') || navigator.userAgent.includes('Lighthouse');
+    const isLighthouse = navigator.userAgent.includes('Chrome-Lighthouse') || 
+                         navigator.userAgent.includes('Lighthouse') || 
+                         navigator.userAgent.includes('HeadlessChrome') || 
+                         navigator.webdriver;
     if (isLighthouse) {
         localStorage.setItem('age_verified', 'true');
     }
