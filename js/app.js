@@ -667,4 +667,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
+    // 7. Lazy-load Google Maps iframe on viewport intersection
+    const lazyMap = document.getElementById('lazy-map');
+    if (lazyMap) {
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3410.817789523098!2d29.974973576268635!3d31.253467074337383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14f5daca7acd63cd%3A0xd421b89ae57f11f0!2sRoyal!5e0!3m2!1sen!2seg!4v1779259730750!5m2!1sen!2seg";
+                    iframe.width = "100%";
+                    iframe.height = "100%";
+                    iframe.style.border = "0";
+                    iframe.allowFullscreen = "";
+                    iframe.loading = "lazy";
+                    iframe.referrerPolicy = "no-referrer-when-downgrade";
+                    iframe.title = "Google Maps location of Royal store in Alexandria";
+                    
+                    lazyMap.innerHTML = '';
+                    lazyMap.appendChild(iframe);
+                    obs.unobserve(lazyMap);
+                }
+            });
+        }, { rootMargin: "300px" });
+        observer.observe(lazyMap);
+    }
 });
