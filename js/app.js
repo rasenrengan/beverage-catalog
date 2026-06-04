@@ -1,17 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
     let allProducts = [];
+    let productsFetchPromise = null;
 
-    // Global fetch of products (available on every page for search/autocomplete)
-    const productsLoadedPromise = fetch(`data/products.json?_=${Date.now()}`)
-        .then(response => response.json())
-        .then(data => {
-            allProducts = data;
-            return allProducts;
-        })
-        .catch(error => {
-            console.error('Error loading products globally:', error);
-            return [];
-        });
+    // Cache products fetch promise to prevent redundant requests
+    function getProducts() {
+        if (!productsFetchPromise) {
+            productsFetchPromise = fetch('data/products.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    allProducts = data;
+                    return data;
+                })
+                .catch(error => {
+                    console.error('Error loading products:', error);
+                    productsFetchPromise = null; // Reset promise on failure
+                    return [];
+                });
+        }
+        return productsFetchPromise;
+    }
+
+    const productsLoadedPromise = getProducts();
 
     // 1. Product Detail Page Logic
     const productDetailContainer = document.getElementById('product-detail-container');
@@ -20,8 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const productId = urlParams.get('id');
 
         if (productId) {
-            fetch(`data/products.json?_=${Date.now()}`)
-                .then(response => response.json())
+            getProducts()
                 .then(data => {
                     // Fix: Compare string to string since JSON ids are numbers
                     const product = data.find(p => p.id.toString() === productId);
@@ -32,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Add mobile responsive styling inline for the detail view
                         productDetailContainer.innerHTML = `
                             <div class="product-image-wrap" style="flex: 1; min-width: 300px;">
-                                <img src="${product.image}" alt="${product.name}" style="width: 100%; max-height: 500px; object-fit: contain; border-radius: 10px;">
+                                <img src="${product.image}" alt="${product.name}" width="400" height="400" style="width: 100%; max-height: 500px; object-fit: contain; border-radius: 10px;">
                             </div>
                             <div class="product-info-wrap" style="flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 300px;">
                                 <div style="color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;">${product.category}</div>
@@ -260,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const alcoholBadge = product.alcohol && product.alcohol !== '0%' ? `<span style="background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase;">${product.alcohol} ABV</span>` : '';
 
         card.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="product-img">
+            <img src="${product.image}" alt="${product.name}" class="product-img" width="400" height="400">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
                 <div class="product-category" style="margin-bottom: 0;">${product.category}</div>
                 ${alcoholBadge}
@@ -284,15 +297,16 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.body.appendChild(callFAB);
 
-    // 4. Global Navbar Search Logic
+    // 4. Global Navbar Search Logic (Semantic Form & Accessible Autocomplete)
+    const searchForm = document.getElementById('global-search-form');
     const searchInput = document.getElementById('global-search-input');
-    const searchBtn = document.getElementById('global-search-btn');
     const searchWrapper = document.querySelector('.nav-search');
     let autocompleteDropdown = null;
 
     if (searchWrapper && searchInput) {
         autocompleteDropdown = document.createElement('div');
         autocompleteDropdown.className = 'nav-search-results';
+        autocompleteDropdown.id = 'search-autocomplete-dropdown';
         searchWrapper.appendChild(autocompleteDropdown);
     }
 
@@ -449,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const alcoholMeta = product.alcohol && product.alcohol !== '0%' ? ` • ${product.alcohol} ABV` : '';
 
                     item.innerHTML = `
-                        <img src="${product.image}" alt="${product.name}">
+                        <img src="${product.image}" alt="${product.name}" width="40" height="40">
                         <div class="suggestion-info">
                             <span class="suggestion-name">${product.name}</span>
                             <span class="suggestion-meta">${product.category}${alcoholMeta}</span>
@@ -486,9 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         searchInput.addEventListener('keydown', (e) => {
             if (!autocompleteDropdown || autocompleteDropdown.style.display !== 'flex') {
-                if (e.key === 'Enter') {
-                    performSearch(searchInput.value);
-                }
+                // Let form submission handle Enter key natively when dropdown is closed
                 return;
             }
 
@@ -510,8 +522,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.preventDefault();
                     suggestions[activeSuggestionIndex].click();
                 } else {
-                    performSearch(searchInput.value);
                     autocompleteDropdown.style.display = 'none';
+                    // Allow the submit listener on the form to run
                 }
             }
         });
@@ -530,8 +542,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 250);
         });
 
-        if (searchBtn) {
-            searchBtn.addEventListener('click', () => {
+        if (searchForm) {
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
                 performSearch(searchInput.value);
                 if (autocompleteDropdown) autocompleteDropdown.style.display = 'none';
             });
@@ -549,18 +562,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 5. Global Age Verification Gate (Age Verification Wall)
+    // 5. Global Age Verification Gate (Age Verification Wall with ARIA & Focus Trap)
     if (localStorage.getItem('age_verified') !== 'true') {
-        // Prevent background page scroll while active
+        const previousActiveElement = document.activeElement;
         document.body.style.overflow = 'hidden';
 
         const overlay = document.createElement('div');
         overlay.className = 'age-gate-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-labelledby', 'age-gate-title');
+        overlay.setAttribute('aria-describedby', 'age-gate-desc');
+
         overlay.innerHTML = `
             <div class="age-gate-modal">
-                <img src="images/logo.png" alt="Royal Logo" class="age-gate-logo">
-                <h2>Welcome to <span>Royal</span></h2>
-                <p>You must be 21 years of age or older to view our premium beverage selection. Please verify your age to continue.</p>
+                <img src="images/logo.webp" alt="Royal Logo" class="age-gate-logo" width="500" height="500">
+                <h2 id="age-gate-title">Welcome to <span>Royal</span></h2>
+                <p id="age-gate-desc">You must be 21 years of age or older to view our premium beverage selection. Please verify your age to continue.</p>
                 <div class="age-gate-buttons">
                     <button class="btn-age-confirm" id="age-confirm-btn">Yes, I am 21+</button>
                     <button class="btn-age-reject" id="age-reject-btn">Under 21</button>
@@ -573,13 +591,39 @@ document.addEventListener('DOMContentLoaded', () => {
         // Trigger show class for transition effect
         setTimeout(() => {
             overlay.classList.add('show');
+            const confirmBtn = document.getElementById('age-confirm-btn');
+            if (confirmBtn) confirmBtn.focus();
         }, 10);
+
+        // Focus Trap Handler
+        const focusableElements = overlay.querySelectorAll('button, [tabindex]:not([tabindex="-1"])');
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Tab') {
+                if (e.shiftKey) {
+                    if (document.activeElement === firstFocusable) {
+                        e.preventDefault();
+                        lastFocusable.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastFocusable) {
+                        e.preventDefault();
+                        firstFocusable.focus();
+                    }
+                }
+            }
+        };
+        overlay.addEventListener('keydown', handleKeyDown);
 
         // Yes button click
         document.getElementById('age-confirm-btn').addEventListener('click', () => {
             localStorage.setItem('age_verified', 'true');
             overlay.style.opacity = '0';
             document.body.style.overflow = 'auto';
+            overlay.removeEventListener('keydown', handleKeyDown);
+            if (previousActiveElement) previousActiveElement.focus();
             setTimeout(() => {
                 overlay.remove();
             }, 500);
